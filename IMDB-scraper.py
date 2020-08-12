@@ -2,8 +2,7 @@ import webbrowser as wb
 from bs4 import BeautifulSoup
 import requests
 class IMDBscraper:
-    def search(self):
-        s=input("Enter the name of the movie: ")
+    def search(self,s): #s is string input (movie name)
         s2=s.split(' ')
         s2='%20'.join(s2)
         s2='https://www.imdb.com/find?q='+s2+'&s=tt&ttype=ft&ref_=fn_ft'
@@ -19,9 +18,9 @@ class IMDBscraper:
                 return(absolute)
         #print(s2)
 
-    def movieDetails(self):
+    def movieDetails(self,s): #s is movie name
         details={}
-        title=self.search()
+        title=self.search(s)
         #wb.open(title)
         r = requests.get(title)
         soup = BeautifulSoup(r.content, 'html5lib')
@@ -47,6 +46,7 @@ class IMDBscraper:
                 #print(x.find_all('h4'))
         print(details)
 
-
+'''FOR UNIT TESTING, PLEASE IGNORE
+s=input()
 obj=IMDBscraper()
-obj.movieDetails()
+obj.movieDetails(s)'''
