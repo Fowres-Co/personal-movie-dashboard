@@ -15,12 +15,12 @@ class IMDBscraper:
             if((str(link.string)).lower()==s.lower()):
                 relative=(link.get('href'))
                 absolute='https://www.imdb.com'+relative
-                return(absolute)
+                return(absolute,relative[7:16])
         #print(s2)
 
     def movieDetails(self,s): #s is movie name
         details={}
-        title=self.search(s)
+        title,rel=self.search(s)
         #wb.open(title)
         r = requests.get(title)
         soup = BeautifulSoup(r.content, 'html5lib')
@@ -44,9 +44,9 @@ class IMDBscraper:
                     for j in i.find_all('a'):
                         details['Genres'].append(j.string.strip())
                 #print(x.find_all('h4'))
-        print(details)
+        return(rel,details)
 
 '''FOR UNIT TESTING, PLEASE IGNORE
 s=input()
 obj=IMDBscraper()
-obj.movieDetails(s)'''
+print(obj.movieDetails(s))'''
