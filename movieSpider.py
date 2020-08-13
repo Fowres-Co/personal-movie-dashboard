@@ -25,18 +25,26 @@ def getMovies(walkPath):
             #checking if media file. need to check for video lenght
             if ext in MEDIAEXTS:
                 fileNamesC.setdefault(base, {})
-                fileNamesC[base]['cleaned'] = nameCleaner(base)
+                fileNamesC[base]['cleaned'], fileNamesC[base]['yr'] = nameCleaner(base) #returns name and year (1800 if not there)
                 fileNamesC[base]['root'] = path
                 fileNamesC[base]['ext'] = ext
         filesE.append(temp)
 
 #cleaning the filename
 def nameCleaner(base):
-    mov = re.match(r'.*[0-9]{4}|.*',' '.join(re.findall(r'[A-Za-z]+|19[0-9]{2}|20[0-9]{2}|(?<![0-9])[0-9]{1,2}(?![0-9])', base)))
+    mov = re.search(r'.*[0-9]{4}|.*',' '.join(re.findall(r'[A-Za-z]+|19[0-9]{2}|20[0-9]{2}|(?<![0-9])[0-9]{1,2}(?![0-9])', base)))
     name = ""
+    yr = '1800'
     if mov:
         name = mov.group()
-    return name
+    if name:
+        yre = re.search(r'[0-9]{4}', name) #assuming there is only 1 year in the string
+        if yre:
+            yr = yre.group()
+            name = name[:yre.span()[0]] + name[yre.span()[1]:].rstrip()
+            #testing
+            print(yre.group(), name)
+    return name, yr
 
 #function to pickle and load pickled meta data
 def loadMetaData(path):

@@ -1,7 +1,10 @@
 import movieSpider as spidy
 import IMDB_scraper
 
-BASEPATH = 'G:\\movies\\'
+#testing
+import traceback
+
+BASEPATH = 'C:\\movietest\\'
 scrapy = IMDB_scraper.IMDBscraper()
 
 #----------Initializing App------------
@@ -22,13 +25,17 @@ for base in spidy.fileNamesC.keys():
 
         #fetch imdb data
         try:
-            details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'])
+            print('Fetching: ',spidy.fileNamesC[base]['cleaned'],' year:',spidy.fileNamesC[base]['yr'])
+            details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'], spidy.fileNamesC[base]['yr'],1) #using 1 for testing
             #testing
             print('got details')
             #add it to meta-data
             spidy.metaData[base] = {'details': details, 'filedata': spidy.fileNamesC[base]}
-        except:
-            print('Error while fetching')
+        except Exception as e:
+            print('Error while fetching: ',e)
+            #uncomment to check traceback
+            #traceback.print_exc()
+
 #saving if changes were made
 if f == 0:
     spidy.saveMetaData(BASEPATH)
