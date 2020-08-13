@@ -2,10 +2,18 @@ import webbrowser as wb
 from bs4 import BeautifulSoup
 import requests
 class IMDBscraper:
-    def search(self,s): #s is string input (movie name)
+    def search(self,s,year,ty): #s is string input (movie name)
         s2=s.split(' ')
         s2='+'.join(s2)
-        s2='https://www.imdb.com/search/title/?title='+s2+'&adult=include'
+        s2='https://www.imdb.com/search/title/?title='+s2
+        if(ty>0):
+            s2=s2+'&title_type='
+            if(ty==1):
+                s2=s2+'feature,tv_movie'
+            if(ty==2):
+                s2=s2+'tv_series,tv_episode,tv_special,tv_miniseries'
+        if(year):
+            s2=s2+'&release_date='+year+'-01-01,'
         r = requests.get(s2) 
         soup = BeautifulSoup(r.content, 'html5lib') 
         
@@ -18,9 +26,9 @@ class IMDBscraper:
                 return(absolute,relative[7:16])
         #print(s2)
 
-    def movieDetails(self,s): #s is movie name
+    def movieDetails(self,s,year,ty): #s is movie name, ty is 1-movie 2-tv series
         details={}
-        title,rel=self.search(s)
+        title,rel=self.search(s,year,ty)
         #wb.open(title)
         r = requests.get(title)
         soup = BeautifulSoup(r.content, 'html5lib')
@@ -48,5 +56,7 @@ class IMDBscraper:
 
 '''FOR UNIT TESTING, PLEASE IGNORE
 s=input()
+year=input()
+ty=int(input())
 obj=IMDBscraper()
-print(obj.movieDetails(s))'''
+print(obj.movieDetails(s,year,ty))'''
