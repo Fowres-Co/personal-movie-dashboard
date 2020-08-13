@@ -44,7 +44,7 @@ def nameCleaner(base):
             name = name[:yre.span()[0]] + name[yre.span()[1]:].rstrip()
             #testing
             print(yre.group(), name)
-    return name, yr
+    return re.sub(r' +',' ',name.lstrip().rstrip()), yr
 
 #function to pickle and load pickled meta data
 def loadMetaData(path):
