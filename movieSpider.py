@@ -5,54 +5,56 @@ import pickle
 MEDIAEXTS = ['.mp4','.mkv','.avi']
 METAFILE = 'metadata.vif'
 
-#metadata format - {id:{imdb scraped data},.....} id:could be a number
-#id lookup: {"base name": id}
+#metadata format - {basename:{imdb scraped data, rootpath},.....}
 metaData = {}
-idLookup = {}
 
-#dirs, filesE and fileNamesC contains respective lists of currRoot path
-currRoot, directories, filesE, fileNamesC = [], [], [], []
+#filesE contains lists of files of currRoot path
+#filenamec has cleaned name of media files
+currRoot, filesE, fileNamesC = [], [], {}
 
-#poor formating
 def getMovies(walkPath):
     global currRoot, directories, filesE, fileNamesC
     for path, dirnames, filenames in os.walk(walkPath):
         currRoot.append(path)
-        directories.append(dirnames)
+        #directories.append(dirnames) #not needed
         #seperating base and extension and storing as a tuple
         temp = []
-        for name in filenames: 
-            temp.append(os.path.splitext(name))
+        for name in filenames:
+            base,ext =  os.path.splitext(name)
+            temp.append((base,ext))
+            #checking if media file. need to check for video lenght
+            if ext in MEDIAEXTS:
+                fileNamesC.setdefault(base, {})
+                fileNamesC[base]['cleaned'] = nameCleaner(base)
+                fileNamesC[base]['root'] = path
+                fileNamesC[base]['ext'] = ext
         filesE.append(temp)
 
-    #function would be better?
-    for flist in filesE:
-        temp = []
-        for base,ext in flist:
-            if ext in MEDIAEXTS:
-                #cleaning the filename
-                mov = re.match(r'.*[0-9]{4}|.*',' '.join(re.findall(r'[A-Za-z]+|19[0-9]{2}|20[0-9]{2}|(?<![0-9])[0-9]{1,2}(?![0-9])', base)))
-                name = ""
-                if mov:
-                    name = mov.group()
-                #print(name,":",base)
-                temp.append(name)
-        fileNamesC.append(temp)
-    #maybe no need to return just call the function and use the stored values
-    #return currRoot, directories, filesE, fileNamesC
+#cleaning the filename
+def nameCleaner(base):
+    mov = re.match(r'.*[0-9]{4}|.*',' '.join(re.findall(r'[A-Za-z]+|19[0-9]{2}|20[0-9]{2}|(?<![0-9])[0-9]{1,2}(?![0-9])', base)))
+    name = ""
+    if mov:
+        name = mov.group()
+    return name
 
 #function to pickle and load pickled meta data
-def loadMetaData():
+def loadMetaData(path):
+    global metaData
     if metaData:
         print("Metadata already loaded.")
     else:
-        with open(METAFILE,'rb') as fin:
-            metaData = pickle.load(fin)
-        fin.close()
+        try:
+            with open(path+METAFILE,'rb') as fin:
+                metaData = pickle.load(fin)
+            fin.close()
+        except (OSError, IOError) as e:
+            print('Error while opening file')
 
-def saveMetaData():
+def saveMetaData(path):
+    global metaData
     if metaData:
-        with open(METAFILE, 'wb') as fout:
+        with open(path+METAFILE, 'wb') as fout:
             pickle.dump(metaData, fout, protocol=pickle.HIGHEST_PROTOCOL)
         fout.close()
     else:
