@@ -4,8 +4,8 @@ import requests
 class IMDBscraper:
     def search(self,s): #s is string input (movie name)
         s2=s.split(' ')
-        s2='%20'.join(s2)
-        s2='https://www.imdb.com/find?q='+s2+'&s=tt&ttype=ft&ref_=fn_ft'
+        s2='+'.join(s2)
+        s2='https://www.imdb.com/search/title/?title='+s2+'&adult=include'
         r = requests.get(s2) 
         soup = BeautifulSoup(r.content, 'html5lib') 
         
