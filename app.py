@@ -26,7 +26,7 @@ for base in spidy.fileNamesC.keys():
         #fetch imdb data
         try:
             print('Fetching: ',spidy.fileNamesC[base]['cleaned'],' year:',spidy.fileNamesC[base]['yr'])
-            details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'], spidy.fileNamesC[base]['yr'],1) #using 1 for testing
+            details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'] + ' ' + spidy.fileNamesC[base]['yr'])
             #testing
             print('got details')
             #add it to meta-data

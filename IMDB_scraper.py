@@ -1,38 +1,27 @@
-import webbrowser as wb
 from bs4 import BeautifulSoup
 import requests
 class IMDBscraper:
-    def search(self,s,year,ty): #s is string input (movie name)
+    def search(self,s): #s is string input (movie name)
         s2=s.split(' ')
         s2='+'.join(s2)
-        s2='https://www.imdb.com/search/title/?title='+s2
-        if(ty>0):
-            s2=s2+'&title_type='
-            if(ty==1):
-                s2=s2+'feature,tv_movie'
-            if(ty==2):
-                s2=s2+'tv_series,tv_episode,tv_special,tv_miniseries'
-        if(year):
-            s2=s2+'&release_date='+year+'-01-01,'
+        s2='https://www.google.com/search?q='+s2+'+imdb'
         r = requests.get(s2) 
         soup = BeautifulSoup(r.content, 'html5lib') 
-        
-        #table = soup.find('div', attrs = {'class':'container'}) 
-        for link in soup.find_all('a'):
-            #print(link.get('href'),str(link.string).lower())
-            if((str(link.string)).lower()==s.lower()):
-                relative=(link.get('href'))
-                absolute='https://www.imdb.com'+relative
-                return(absolute,relative[7:16])
-        #print(s2)
+        #print(soup.prettify())
+        for a in soup.find_all('a'):
+            if(a.get('href')[:28]=='/url?q=https://www.imdb.com/'):
+                return(a.get('href')[7:44])
 
-    def movieDetails(self,s,year,ty): #s is movie name, ty is 1-movie 2-tv series
+    def movieDetails(self,s):
         details={}
-        title,rel=self.search(s,year,ty)
+        title=self.search(s)
         #wb.open(title)
         r = requests.get(title)
-        soup = BeautifulSoup(r.content, 'html5lib')
+        soup = BeautifulSoup(r.content, 'lxml')
         
+        #Finding name
+        x=soup.find('h1')
+        details['Name']=str(x.text).replace(u'\xa0',u' ').strip()
         #Finding rating
         for i in soup.find_all('span'):
             #print(i.get('itemprop'))
@@ -52,11 +41,23 @@ class IMDBscraper:
                     for j in i.find_all('a'):
                         details['Genres'].append(j.string.strip())
                 #print(x.find_all('h4'))
-        return(rel,details)
+            elif(i.get('class')=='summary_text'.split()):
+                details['Summary']=i.text.strip()
+            elif(i.get('class')=='credit_summary_item'.split()):
+                x=(i.text.split('\n'))
+                details[x[1][:len(x[1])-1]]=x[2][:len(x[2])-1].strip().split(', ')
+        return(title[27:36],details)
+        '''Details include
+        Name
+        Genres
+        Rating
+        Summary
+        Director
+        Writers
+        Stars
+        '''
 
 '''FOR UNIT TESTING, PLEASE IGNORE
 s=input()
-year=input()
-ty=int(input())
 obj=IMDBscraper()
-print(obj.movieDetails(s,year,ty))'''
+print(obj.movieDetails(s))'''
