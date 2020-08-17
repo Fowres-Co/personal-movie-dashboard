@@ -13,6 +13,8 @@ logger = xLogger.log #getting logging object
 BASEPATH = 'C:\\movietest\\'
 scrapy = IMDB_scraper.IMDBscraper()
 logger.info("Initialized scraper")
+updateMetaFile = False
+totalCount, fetchCount = 0, 0
 
 #----------Initializing App------------
 #load pickled file here
@@ -24,19 +26,22 @@ spidy.getMovies(BASEPATH)
 logger.info('Walk completed')
 
 #check what all is new
-updateMetaFile = False
 for base in spidy.fileNamesC.keys():
     if base not in spidy.metaData:
+        totalCount += 1
         logger.info('Found new - ' + str(spidy.fileNamesC[base]))
         updateMetaFile = True
         try:
             logger.debug('Fetching: '+str(spidy.fileNamesC[base]['cleaned'])+' year:'+str(spidy.fileNamesC[base]['yr']))
             details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'] + ' ' + spidy.fileNamesC[base]['yr'])
             logger.info('Fetched details')
+            fetchCount += 1
             spidy.metaData[base] = {'details': details, 'filedata': spidy.fileNamesC[base]}
             logger.info('Added to metadata')
         except Exception as e:
             logger.exception('Error while fetching:')
+
+logger.info('Fetch Accuracy: ' + str(fetchCount/totalCount))
 
 #saving if changes were made
 if updateMetaFile:
