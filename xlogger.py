@@ -40,20 +40,20 @@ class Logger:
             filename = filelevel +'.log'
         self.makeFileHandler(filename, filelevel, format)
 
-    def makeFileHandler(self, filename, filelevel = logging.DEBUG, format = defaultFormat):
+    def makeFileHandler(self, filelevel, filename = None, format = defaultFormat):
+        if not filename:
+            filename = filelevel + '.log'
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(levels[filelevel])
-        if format:
-            formatter = logging.Formatter(format)
-            file_handler.setFormatter(formatter)
+        formatter = logging.Formatter(format)
+        file_handler.setFormatter(formatter)
         self.log.addHandler(file_handler)
 
     def makeStreamHandler(self, streamlevel = logging.DEBUG, format = defaultFormat):
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(streamlevel)
-        if format:
-            formatter = logging.Formatter(format)
-            stream_handler.setFormatter(formatter)
+        formatter = logging.Formatter(format)
+        stream_handler.setFormatter(formatter)
         self.log.addHandler(stream_handler)
 
 #testing
