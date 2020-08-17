@@ -1,46 +1,56 @@
 import movieSpider as spidy
 import IMDB_scraper
 
-#testing
-import traceback
+#--- testing custom logger
+from xlogger import Logger
+
+#loggger set to log debug and up where errors are logged to file 'error.log'
+xLogger = Logger(__name__, 'debug', filelevel = 'error')
+xLogger.makeFileHandler('info')
+logger = xLogger.log #getting logging object
+#---
 
 BASEPATH = 'C:\\movietest\\'
 scrapy = IMDB_scraper.IMDBscraper()
+logger.info("Initialized scraper")
 
 #----------Initializing App------------
 #load pickled file here
 spidy.loadMetaData(BASEPATH)
+logger.info('Loading metadata finished')
 
 #walk current directory
 spidy.getMovies(BASEPATH)
+logger.info('Walk completed')
 
 #check what all is new
-f=1
+updateMetaFile = False
 for base in spidy.fileNamesC.keys():
     if base not in spidy.metaData:
-        f=0
-
-        #testing
-        print(spidy.fileNamesC[base])
-
-        #fetch imdb data
+        logger.info('Found new - ' + str(spidy.fileNamesC[base]))
+        updateMetaFile = True
         try:
-            print('Fetching: ',spidy.fileNamesC[base]['cleaned'],' year:',spidy.fileNamesC[base]['yr'])
+            logger.debug('Fetching: '+str(spidy.fileNamesC[base]['cleaned'])+' year:'+str(spidy.fileNamesC[base]['yr']))
             details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'] + ' ' + spidy.fileNamesC[base]['yr'])
-            #testing
-            print('got details')
-            #add it to meta-data
+            logger.info('Fetched details')
             spidy.metaData[base] = {'details': details, 'filedata': spidy.fileNamesC[base]}
+            logger.info('Added to metadata')
         except Exception as e:
-            print('Error while fetching: ',e)
-            #uncomment to check traceback
-            #traceback.print_exc()
+            logger.exception('Error while fetching:')
 
 #saving if changes were made
-if f == 0:
+if updateMetaFile:
     spidy.saveMetaData(BASEPATH)
+    logger.info('Saving Finished')
+    updateMetaFile = False
+else:
+    logger.info('No new file')
 
-print(spidy.metaData)
+#testing
+# xLogger.makeStreamHandler()
+# for i in range(5):
+#     if len(spidy.metaData.keys()) >= 5:
+#         logger.debug(str(spidy.metaData[list(spidy.metaData.keys())[i]]))
 
 #----------Utility functions here------
 #sorting
