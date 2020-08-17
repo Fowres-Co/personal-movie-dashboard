@@ -13,7 +13,8 @@ debug < info < warning < error < critical
 *when set to lower level it can log higher levels but
 
 eg -    from xlogger import Logger
-        logger = Logger(__name__, 'debug').log
+        xlogger = Logger(__name__, 'debug')
+        logger = xlogger.log
         logger.debug('Message')
 '''
 import logging
@@ -30,10 +31,14 @@ class Logger:
     log = None 
     defaultFormat = '%(asctime)s:%(name)s:%(message)s'
 
-    def __init__(self, name, level, filename = None, filelevel = None, format = defaultFormat):
+    def __init__(self, name, level, filelevel = None, filename = None, format = defaultFormat):
         self.log = logging.getLogger(name)
         self.log.setLevel(levels[level])
-        self.makeFileHandler(filename if filename else level+'.log', filelevel if filelevel else level, format)
+        if not filelevel:
+            filelevel = level
+        if not filename:
+            filename = filelevel +'.log'
+        self.makeFileHandler(filename, filelevel, format)
 
     def makeFileHandler(self, filename, filelevel = logging.DEBUG, format = defaultFormat):
         file_handler = logging.FileHandler(filename)
