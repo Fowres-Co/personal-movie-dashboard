@@ -35,7 +35,7 @@ class Logger:
         self.log.setLevel(levels[level])
         self.makeFileHandler(filename if filename else level+'.log', filelevel if filelevel else level, format)
 
-    def makeFileHandler(self, filename, filelevel = logging.DEBUG, format = None):
+    def makeFileHandler(self, filename, filelevel = logging.DEBUG, format = defaultFormat):
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(levels[filelevel])
         if format:
@@ -43,7 +43,7 @@ class Logger:
             file_handler.setFormatter(formatter)
         self.log.addHandler(file_handler)
 
-    def makeStreamHandler(self, streamlevel = logging.DEBUG, format = None):
+    def makeStreamHandler(self, streamlevel = logging.DEBUG, format = defaultFormat):
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(streamlevel)
         if format:
