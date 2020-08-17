@@ -36,9 +36,7 @@ class Logger:
         self.log.setLevel(levels[level])
         if not filelevel:
             filelevel = level
-        if not filename:
-            filename = filelevel +'.log'
-        self.makeFileHandler(filename, filelevel, format)
+        self.makeFileHandler(filelevel, filename, format)
 
     def makeFileHandler(self, filelevel, filename = None, format = defaultFormat):
         if not filename:
