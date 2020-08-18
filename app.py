@@ -41,10 +41,9 @@ for base in spidy.fileNamesC.keys():
         except Exception as e:
             logger.exception('Error while fetching:')
 
-logger.info('Fetch Accuracy: ' + str(fetchCount/totalCount))
-
 #saving if changes were made
 if updateMetaFile:
+    logger.info('Fetch Accuracy: ' + str(fetchCount/totalCount))
     spidy.saveMetaData(BASEPATH)
     logger.info('Saving Finished')
     updateMetaFile = False
