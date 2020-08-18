@@ -29,7 +29,7 @@ levels = {
 
 class Logger:
     log = None 
-    defaultFormat = '%(asctime)s:%(name)s:%(message)s'
+    defaultFormat = '%(asctime)s:%(name)s:%(levelname)s:%(message)s'
 
     def __init__(self, name, level, filelevel = None, filename = None, format = defaultFormat):
         self.log = logging.getLogger(name)
@@ -37,6 +37,8 @@ class Logger:
         if not filelevel:
             filelevel = level
         self.makeFileHandler(filelevel, filename, format)
+        if level == 'debug':
+            self.makeStreamHandler()
 
     def makeFileHandler(self, filelevel, filename = None, format = defaultFormat):
         if not filename:

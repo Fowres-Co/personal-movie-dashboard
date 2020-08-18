@@ -4,8 +4,7 @@ import requests
 #--- testing custom logger
 from xlogger import Logger
 
-#loggger set to log debug and up where errors are logged to file 'error.log'
-xLogger = Logger(__name__, 'debug', filelevel = 'error')
+xLogger = Logger(__name__, 'info')
 logger = xLogger.log #getting logging object
 #---
 
@@ -67,7 +66,6 @@ class IMDBscraper:
         '''
 
 # FOR UNIT TESTING, PLEASE IGNORE
-# xLogger.makeStreamHandler()
 # s=input()
 # obj=IMDBscraper()
 # logger.debug(obj.movieDetails(s))

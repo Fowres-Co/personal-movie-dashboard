@@ -5,9 +5,7 @@ import pickle
 #--- testing custom logger
 from xlogger import Logger
 
-#loggger set to log debug and up where errors are logged to file 'error.log'
-xLogger = Logger(__name__, 'debug', filelevel = 'error')
-xLogger.makeFileHandler('info')
+xLogger = Logger(__name__, 'info')
 logger = xLogger.log #getting logging object
 #---
 
@@ -92,5 +90,4 @@ def saveMetaData(path):
         logger.error('Cannot write empty metadata to file.')
 
 #testing
-# xLogger.makeStreamHandler() #logging debugs and up to console for testing
 # getMovies('c:\\movietest\\')

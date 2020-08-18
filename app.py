@@ -4,9 +4,7 @@ import IMDB_scraper
 #--- testing custom logger
 from xlogger import Logger
 
-#loggger set to log debug and up where errors are logged to file 'error.log'
-xLogger = Logger(__name__, 'debug', filelevel = 'error')
-xLogger.makeFileHandler('info')
+xLogger = Logger(__name__, 'info')
 logger = xLogger.log #getting logging object
 #---
 
@@ -51,7 +49,6 @@ else:
     logger.info('No new file')
 
 #testing
-# xLogger.makeStreamHandler()
 # for i in range(5):
 #     if len(spidy.metaData.keys()) >= 5:
 #         logger.debug(str(spidy.metaData[list(spidy.metaData.keys())[i]]))
