@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 from shutil import copyfileobj
 
+from os import path, makedirs
+
 #--- testing custom logger
 from xlogger import Logger
 
@@ -57,6 +59,9 @@ class IMDBscraper:
                 details[x[1][:len(x[1])-1]]=x[2][:len(x[2])-1].strip().split(', ')
 
         #downloading poster
+        if not path.exists('web/images/posters'):
+            makedirs('web/images/posters')
+            
         poster = soup.find('div', attrs = {'class':'poster'})
         posterImg = poster.find('img')
         imgSrc = posterImg.get('src')
