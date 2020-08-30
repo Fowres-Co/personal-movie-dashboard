@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="css/bulma.min.css">
+    <link rel="stylesheet" href="css/bedit.css">
+    <script type="text/javascript" src="/eel.js"></script>
+  </head>
+  <body class="has-background-light has-navbar-fixed-top" onload="getMovies();">
+    <nav class="navbar is-transparent is-fixed-top">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="">
+          <img src="https://bulma.io/images/bulma-logo.png" alt="PMD - One stop to all movies" width="112" height="28">
+        </a>
+      </div>
+    
+      <div id="navbarExampleTransparentExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="">
+            Home
+          </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link" href="">
+              Docs
+            </a>
+            <div class="navbar-dropdown is-boxed">
+              <a class="navbar-item" href="">
+                Overview
+              </a>
+              <a class="navbar-item" href="">
+                Modifiers
+              </a>
+              <a class="navbar-item" href="">
+                Columns
+              </a>
+              <a class="navbar-item" href="">
+                Layout
+              </a>
+              <a class="navbar-item" href="">
+                Form
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item" href="">
+                Elements
+              </a>
+              <a class="navbar-item is-active" href="">
+                Components
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-burger burger is-active alwaysActive" onclick="closeApp()">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="section">
+      <div class="container">
+
+        <div id="TileBox" class="columns is-multiline">
+
+          <!-- to be copied multiple times -->
+          <div id="CardTemplate" class="column is-one-quarter is-hidden">
+            <div class="card">
+              <div class="card-image">
+                <figure class="image is-fullwidth">
+                  <img id="CardTemplateImage" src="" alt="Placeholder image">
+                </figure>
+              </div>
+              <div class="card-content">
+                <p id="CardTemplateTitle" class="title is-4">Template Node</p>
+                <p id="CardTemplateContent" class="content">Content Here</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <script>
+      const card = document.getElementById('CardTemplate');
+      const tileBox = document.getElementById('TileBox');
+
+      async function getMovies() {
+        let movs = await eel.getMovies()();
+        
+        for(var i=0; i<movs.length; i++) {
+          tileBox.appendChild(makeMovieTile(movs[i]));
+        }
+      }
+
+      function makeMovieTile(dets) {
+        var tile = card.cloneNode(true);
+        tile.querySelector('#CardTemplateImage').src = dets.Poster.substr(4);
+        tile.querySelector('#CardTemplateTitle').innerText = dets.Name;
+        tile.querySelector('#CardTemplateContent').innerText = dets.Summary;
+        tile.classList.remove('is-hidden');
+        return tile;
+      }
+
+      //workarround to close in kiosk mode
+      function closeApp() {
+        eel.closeApp();
+        window.close();
+      }
+    </script>
+  </body>
+</html>

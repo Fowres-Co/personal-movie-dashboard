@@ -1,3 +1,8 @@
 #exclude compiled byte code
 __pycache__/
+
+#ignore logs
 *.log
+
+#dynamicaly generated
+web/images/posters/

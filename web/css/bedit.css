@@ -1,0 +1,23 @@
+body {
+    height: 100vh!important;
+    overflow: hidden;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.section {
+    height: inherit;
+    overflow: scroll;
+}
+
+.card-image
+{
+    max-height: 250px;
+    overflow: hidden;
+}
+
+.alwaysActive {
+    display: block!important;
+}

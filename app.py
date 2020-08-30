@@ -1,6 +1,9 @@
 import movieSpider as spidy
 import IMDB_scraper
 
+#--- GUI
+import eel
+
 #--- testing custom logger
 from xlogger import Logger
 
@@ -59,3 +62,25 @@ else:
 #show copies
 
 #some gui here if using python based
+
+eel.init('web')
+
+@eel.expose
+def getMovies():
+    logger.debug('python in')
+    ret = []
+    for i in spidy.metaData:
+        tl = {}
+        tl['Poster'] = spidy.metaData[i]['details'][1]['Poster']
+        tl['Name'] = spidy.metaData[i]['details'][1]['Name']
+        tl['Summary'] = spidy.metaData[i]['details'][1]['Summary']
+        ret.append(tl)
+    logger.debug('python out')
+    return ret
+
+@eel.expose
+def closeApp():
+    eel.sys.exit(0)
+
+#bloack and enter loop
+eel.start('main.html', port=8080, cmdline_args=['--start-fullscreen', '--kiosk'])
