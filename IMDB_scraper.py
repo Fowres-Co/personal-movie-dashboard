@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+from shutil import copyfileobj
 
 #--- testing custom logger
 from xlogger import Logger
@@ -54,6 +55,25 @@ class IMDBscraper:
             elif(i.get('class')=='credit_summary_item'.split()):
                 x=(i.text.split('\n'))
                 details[x[1][:len(x[1])-1]]=x[2][:len(x[2])-1].strip().split(', ')
+
+        #downloading poster
+        poster = soup.find('div', attrs = {'class':'poster'})
+        posterImg = poster.find('img')
+        imgSrc = posterImg.get('src')
+        logger.info('trying to download poster')
+        try:
+            img = requests.get(imgSrc, stream=True)
+            try:
+                with open('web/images/posters/'+details['Name']+'.jpg', 'wb') as fout:
+                    copyfileobj(img.raw, fout)
+                del img
+                details['Poster'] = 'web/images/posters/'+details['Name']+'.jpg'
+                logger.info('Poster downloaded')
+            except:
+                logger.exception('Unable to save poster')
+        except:
+            logger.exception('Unable to get poster')
+
         return(title[27:36],details)
         '''Details include
         Name
