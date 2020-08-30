@@ -1,13 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-
-#--- testing custom logger
-from xlogger import Logger
-
-xLogger = Logger(__name__, 'info')
-logger = xLogger.log #getting logging object
-#---
-
 class IMDBscraper:
     def search(self,s): #s is string input (movie name)
         s2=s.split(' ')
@@ -15,7 +7,7 @@ class IMDBscraper:
         s2='https://www.google.com/search?q='+s2+'+imdb'
         r = requests.get(s2) 
         soup = BeautifulSoup(r.content, 'html5lib') 
-        logger.debug(soup.prettify())
+        #print(soup.prettify())
         for a in soup.find_all('a'):
             if(a.get('href')[:28]=='/url?q=https://www.imdb.com/'):
                 return(a.get('href')[7:44])
@@ -32,7 +24,7 @@ class IMDBscraper:
         details['Name']=str(x.text).replace(u'\xa0',u' ').strip()
         #Finding rating
         for i in soup.find_all('span'):
-            logger.debug(i.get('itemprop'))
+            #print(i.get('itemprop'))
             if(i.get('itemprop')=='ratingValue'):
                 details['Rating']=float(i.string)
                 break
@@ -40,15 +32,15 @@ class IMDBscraper:
         #Finding genres
         details['Genres']=[]
         for i in soup.find_all('div'):
-            logger.debug(i.get('class'))
+            #print(i.get('class'))
             if(i.get('class')=='see-more inline canwrap'.split()):
                 x=i.find('h4')
-                logger.debug('-'+x.string+'-')
+                #print('-'+x.string+'-')
                 if(str(x.string)=='Genres:'):
                     #i.find_all('a')
                     for j in i.find_all('a'):
                         details['Genres'].append(j.string.strip())
-                logger.debug(x.find_all('h4'))
+                #print(x.find_all('h4'))
             elif(i.get('class')=='summary_text'.split()):
                 details['Summary']=i.text.strip()
             elif(i.get('class')=='credit_summary_item'.split()):
@@ -65,7 +57,7 @@ class IMDBscraper:
         Stars
         '''
 
-# FOR UNIT TESTING, PLEASE IGNORE
-# s=input()
-# obj=IMDBscraper()
-# logger.debug(obj.movieDetails(s))
+'''FOR UNIT TESTING, PLEASE IGNORE
+s=input()
+obj=IMDBscraper()
+print(obj.movieDetails(s))'''

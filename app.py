@@ -1,5 +1,6 @@
 import movieSpider as spidy
 import IMDB_scraper
+import recommender
 
 #--- testing custom logger
 from xlogger import Logger
@@ -8,8 +9,9 @@ xLogger = Logger(__name__, 'info')
 logger = xLogger.log #getting logging object
 #---
 
-BASEPATH = 'C:\\movietest\\'
+BASEPATH = 'C:\\Users\\Krishna\\Videos\\Dummy\\'
 scrapy = IMDB_scraper.IMDBscraper()
+reco=recommender.recommender()
 logger.info("Initialized scraper")
 updateMetaFile = False
 totalCount, fetchCount = 0, 0
@@ -48,6 +50,7 @@ if updateMetaFile:
 else:
     logger.info('No new file')
 
+print(reco.findSimilar('tt4154796',spidy.metaData))
 #testing
 # for i in range(5):
 #     if len(spidy.metaData.keys()) >= 5:
