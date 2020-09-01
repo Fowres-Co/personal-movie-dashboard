@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 from shutil import copyfileobj
+<<<<<<< Updated upstream
 
 from os import path, makedirs
+=======
+>>>>>>> Stashed changes
 
 #--- testing custom logger
 from xlogger import Logger
