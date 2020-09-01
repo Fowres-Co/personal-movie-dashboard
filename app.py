@@ -83,4 +83,9 @@ def closeApp():
     eel.sys.exit(0)
 
 #bloack and enter loop
-eel.start('main.html', port=8080, cmdline_args=['--start-fullscreen', '--kiosk'])
+try:
+    eel.start('reactive.html', cmdline_args=['--start-fullscreen'])
+except SystemExit:
+    pass
+except:
+    logger.exception('Eel start error')

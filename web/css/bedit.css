@@ -8,16 +8,21 @@ body::-webkit-scrollbar {
 }
 
 .section {
-    height: inherit;
+    height: 100vh;
     overflow: scroll;
 }
 
-.card-image
-{
+.card-image {
     max-height: 250px;
     overflow: hidden;
 }
 
 .alwaysActive {
     display: block!important;
+}
+
+.modal-content {
+    height: 80vh;
+    width: 80vw;
+    overflow-x: hidden;
 }

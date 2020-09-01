@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>PMD - One Stop For All Your Movies</title>
+
+  <link rel="stylesheet" href="css/bulma.min.css">
+
+  <script type="text/javascript" src="/eel.js"></script>
+
+  <script type="text/javascript" src="js/react.production.min.js"></script>
+  <script type="text/javascript" src="js/react-dom.production.min.js"></script>
+  <script type="text/javascript" src="js/babel.min.js"></script>
+
+  <link rel="stylesheet" href="css/bedit.css">
+
+  <script type="text/babel" src="js/components.js" crossorigin></script>
+</head>
+
+<body class="has-background-light has-navbar-fixed-top">
+  <!-- react root -->
+  <div id="root"></div>
+
+  <!-- Main Gui here -->
+  <script type="text/babel">
+    const rootElement = document.getElementById('root');
+
+    class MyApp extends React.Component {
+      
+      constructor(props) {
+        super(props);
+        this.closeApp = this.closeApp.bind(this);
+        this.modalShow = this.modalShow.bind(this);
+        this.modalHide = this.modalHide.bind(this);
+        this.state = { movies: [], modalActive: " ", modalContent: " " };
+      }
+
+      async componentDidMount() {
+        const movs = await eel.getMovies()();
+        console.log('from didmount: ',movs);
+        this.setState({ movies: movs });
+      }
+
+      closeApp() {
+        eel.closeApp();
+        window.close();
+      }
+
+      modalShow(content) {
+        this.setState({ modalActive: "is-active", modalContent: content });
+        console.log('Showing');
+      }
+
+      modalHide() {
+        this.setState({ modalActive: " " });
+        console.log('Hidding');
+      }
+
+      render() {
+        return (
+          <div>
+            <Navbar oclick={this.closeApp} />
+            <Modal active={this.state.modalActive} close={this.modalHide} content={this.state.modalContent}/>
+            <section class="section">
+              <div class="container">
+                <div id="TileBox" class="columns is-multiline">
+                  {
+                    this.state.movies.map(movie => (
+                      <Card src={movie.Poster.substr(4)} alt="Poster" title={movie.Name} onClick={() => this.modalShow(movie.Summary)}/>// content={movie.Summary} />
+                    ))
+                  }
+                </div>
+              </div>
+            </section>
+          </div>
+        );
+      }
+    }
+
+    function App() {
+      return (
+        <div>
+          <MyApp />
+        </div>
+      );
+    }
+
+    ReactDOM.render(
+      <App />,
+      rootElement
+    );
+  </script>
+
+  <!-- More pages/tabs here -->
+</body>
+
+</html>

@@ -4,5 +4,9 @@ __pycache__/
 #ignore logs
 *.log
 
-#dynamicaly generated
+#dynamicaly generated posters
 web/images/posters/
+
+#build files
+build/
+dist/
