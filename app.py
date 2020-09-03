@@ -9,49 +9,69 @@ logger = xLogger.log #getting logging object
 #---
 
 BASEPATH = 'C:\\movietest\\'
+MEDIAEXTS = ['.mp4','.mkv','.avi']
+METAFILE = 'metadata.vif'
+
 scrapy = IMDB_scraper.IMDBscraper()
 logger.info("Initialized scraper")
+
+#metadata format - {title1: {'name':'', other things from details..,'filedata':{file info here}}, title2: ..}
+metaData = {}
+loadedBaseNames = []
 updateMetaFile = False
 totalCount, fetchCount = 0, 0
 
 #----------Initializing App------------
 #load pickled file here
-spidy.loadMetaData(BASEPATH)
-logger.info('Loading metadata finished')
+if metaData:
+    logger.info("Metadata already loaded.")
+else:
+    metaData = spidy.loadMetaData(BASEPATH+METAFILE)
+    loadedBaseNames = [val['filedata']['base'] for val in list(metaData.values())]
+    logger.info('Loading metadata finished' + str(metaData))
 
 #walk current directory
-spidy.getMovies(BASEPATH)
+mediaFiles = spidy.getMediaFiles(BASEPATH, MEDIAEXTS)
 logger.info('Walk completed')
 
 #check what all is new
-for base in spidy.fileNamesC.keys():
-    if base not in spidy.metaData:
+for file in mediaFiles:
+    if file['base'] not in loadedBaseNames:
         totalCount += 1
-        logger.info('Found new - ' + str(spidy.fileNamesC[base]))
         updateMetaFile = True
+        
+        #cleaning base name for  search
+        cleanedName, year = spidy.nameCleaner(file['base'])
+        logger.info('Found new - ' + str(cleanedName))
+        
+        #trying to fetch details
         try:
-            logger.debug('Fetching: '+str(spidy.fileNamesC[base]['cleaned'])+' year:'+str(spidy.fileNamesC[base]['yr']))
-            details = scrapy.movieDetails(spidy.fileNamesC[base]['cleaned'] + ' ' + spidy.fileNamesC[base]['yr'])
+            logger.debug('Fetching: '+str(cleanedName)+' year:'+str(year))
+            title, details = scrapy.movieDetails(cleanedName + ' ' + year)
             logger.info('Fetched details')
             fetchCount += 1
-            spidy.metaData[base] = {'details': details, 'filedata': spidy.fileNamesC[base]}
+            
+            #adding fetched details
+            metaData[title] = {'filedata': file}
+            for key in details.keys():
+                metaData[title][key] = details[key]
             logger.info('Added to metadata')
+
         except Exception as e:
-            logger.exception('Error while fetching:')
+            logger.exception('Error while fetching' + file['base'])
 
 #saving if changes were made
 if updateMetaFile:
     logger.info('Fetch Accuracy: ' + str(fetchCount/totalCount))
-    spidy.saveMetaData(BASEPATH)
+    spidy.saveMetaData(BASEPATH+METAFILE, metaData)
     logger.info('Saving Finished')
     updateMetaFile = False
 else:
     logger.info('No new file')
 
 #testing
-# for i in range(5):
-#     if len(spidy.metaData.keys()) >= 5:
-#         logger.debug(str(spidy.metaData[list(spidy.metaData.keys())[i]]))
+# if len(metaData.keys()) > 0:
+#     logger.debug(str(metaData[list(metaData.keys())[0]]))
 
 #----------Utility functions here------
 #sorting
