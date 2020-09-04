@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import re
 class IMDBscraper:
     def search(self,s): #s is string input (movie name)
         s2=s.split(' ')
@@ -45,7 +46,11 @@ class IMDBscraper:
                 details['Summary']=i.text.strip()
             elif(i.get('class')=='credit_summary_item'.split()):
                 x=(i.text.split('\n'))
-                details[x[1][:len(x[1])-1]]=x[2][:len(x[2])-1].strip().split(', ')
+                chk=re.match('[A-Za-z]+s$',x[1][:len(x[1])-1])
+                if(chk):
+                    details[x[1][:len(x[1])-2]]=x[2][:len(x[2])-1].strip().split(', ')
+                else:
+                    details[x[1][:len(x[1])-1]]=x[2][:len(x[2])-1].strip().split(', ')
         return(title[27:36],details)
         '''Details include
         Name

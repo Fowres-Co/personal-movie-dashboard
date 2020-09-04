@@ -9,36 +9,20 @@ xLogger = Logger(__name__, 'info')
 logger = xLogger.log #getting logging object
 #---
 
-MEDIAEXTS = ['.mp4','.mkv','.avi']
-METAFILE = 'metadata.vif'
-
-#metadata format - {basename:{imdb scraped data, rootpath....},.....}
-metaData = {}
-
-#filesE contains lists of files of currRoot path
-#filenamec has cleaned name of media files
-currRoot, filesE, fileNamesC = [], [], {}
-
-def getMovies(walkPath):
-    global currRoot, filesE, fileNamesC
+def getMediaFiles(walkPath, mExts):
+    mediaFiles, baseNames = [], []
 
     for path, dirnames, filenames in os.walk(walkPath):
-        currRoot.append(path)
-        
-        temp = []
         for name in filenames:
             base,ext =  os.path.splitext(name) #seperating base and extension and storing as a tuple
-            temp.append((base,ext))
             
             #checking if media file. need to check for video lenght
-            if ext in MEDIAEXTS:
-                fileNamesC.setdefault(base, {})
-                fileNamesC[base]['cleaned'], fileNamesC[base]['yr'] = nameCleaner(base)
-                fileNamesC[base]['root'] = path
-                fileNamesC[base]['ext'] = ext
-                logger.info('found - ' + str(fileNamesC[base]))
-        
-        filesE.append(temp)
+            if ext in mExts:
+                mediaFiles.append({'root':path, 'base':base, 'ext': ext})
+                baseNames.append(base)
+                logger.info('found - ' + mediaFiles[-1]['base'])
+
+    return mediaFiles
 
 #cleaning the filename
 #returns name and year (1800 if not there)
@@ -65,24 +49,19 @@ def nameCleaner(base):
 
 #function to pickle and load pickled meta data
 def loadMetaData(path):
-    global metaData
+    try:
+        with open(path,'rb') as fin:
+            metaData = pickle.load(fin)
+        fin.close()
+        logger.info('Metadata loaded successfully')
+        return metaData
+    except (OSError, IOError) as e:
+        logger.exception('Error while opening file')
+        return {}
 
+def saveMetaData(path, metaData):
     if metaData:
-        logger.info("Metadata already loaded.")
-    else:
-        try:
-            with open(path+METAFILE,'rb') as fin:
-                metaData = pickle.load(fin)
-            fin.close()
-            logger.info('Metadata loaded successfully')
-        except (OSError, IOError) as e:
-            logger.exception('Error while opening file')
-
-def saveMetaData(path):
-    global metaData
-
-    if metaData:
-        with open(path+METAFILE, 'wb') as fout:
+        with open(path, 'wb') as fout:
             pickle.dump(metaData, fout, protocol=pickle.HIGHEST_PROTOCOL)
         fout.close()
         logger.info('Metadata saved successfully.')
