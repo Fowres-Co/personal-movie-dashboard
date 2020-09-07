@@ -82,5 +82,10 @@ def getMovies():
 def closeApp():
     eel.sys.exit(0)
 
+startMode = {
+    'dev': [],
+    'dist': ['-start-fullscreen', '-kiosk']
+}
+
 #bloack and enter loop
-eel.start('main.html', port=8080, cmdline_args=['--start-fullscreen', '--kiosk'])
+eel.start('main.html', cmdline_args=startMode['dev'])
