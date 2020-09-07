@@ -26,3 +26,11 @@ body::-webkit-scrollbar {
     width: 80vw;
     overflow-x: hidden;
 }
+
+.is-clickable:hover {
+    cursor: pointer;
+}
+
+.is-no-focus:focus {
+    outline: none!important;
+}

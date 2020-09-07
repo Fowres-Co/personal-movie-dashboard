@@ -1,5 +1,6 @@
 import movieSpider as spidy
 import IMDB_scraper
+import os
 
 #--- GUI
 import eel
@@ -54,8 +55,22 @@ for file in mediaFiles:
             logger.info('Fetched details')
             fetchCount += 1
             
+            #creating symbolic/soft link
+            try:
+                if not os.path.exists('web/symbs/videos'):
+                    os.makedirs('web/symbs/videos')
+                src = file['root'] + ('\\' if file['root'][-1] != '\\' else '') + file['base'] + file['ext']
+                os.symlink(src, 'web/symbs/videos/'+title)
+                metaData[title] = {'symlink':{'folder':'web/symbs/videos/', 'file':title}}
+                logger.info(metaData[title]['symlink'])
+            except FileExistsError:
+                metaData[title] = {'symlink':{'folder':'web/symbs/videos/', 'file':title}}
+            except:
+                metaData[title] = {'symlink':''}
+                logger.exception("I don't have the power to make symlinks :'(")
+
             #adding fetched details
-            metaData[title] = {'filedata': file}
+            metaData[title]['filedata'] = file
             for key in details.keys():
                 metaData[title][key] = details[key]
             logger.info('Added to metadata')
@@ -90,10 +105,12 @@ def getMovies():
     logger.debug('python in')
     ret = []
     for i in metaData:
+        logger.debug(i+': '+metaData[i]['Name'])
         tl = {}
         tl['Poster'] = metaData[i]['Poster']
         tl['Name'] = metaData[i]['Name']
         tl['Summary'] = metaData[i]['Summary']
+        tl['Symlink'] = metaData[i]['symlink']['file']
         ret.append(tl)
     logger.debug('python out')
     return ret

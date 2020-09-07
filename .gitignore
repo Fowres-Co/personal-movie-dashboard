@@ -10,3 +10,6 @@ web/images/posters/
 #build files
 build/
 dist/
+
+#symlinks not same everywhere
+web/symbs/

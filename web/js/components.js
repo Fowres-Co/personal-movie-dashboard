@@ -85,7 +85,7 @@ function Navbar(props) {
 function Card(props) {
   return(
     <div class="column is-one-fifth is-flex" onClick={props.onClick}>
-      <div class="card">
+      <div class="card is-clickable">
         <div class="card-image">
           <figure class="image is-fullwidth">
             <img src={props.src} alt={props.alt} />
@@ -106,7 +106,9 @@ function Modal(props) {
       <div class="modal-content">
         <div class="columns">
           <div class="column is-two-third">
-            <div class="box"></div>
+            <video controls class="is-flex is-no-focus" src={'symbs/videos/' + props.symlink}>
+              Video format must be travelling on turtle. It will get here on of these days I guess.
+            </video>
           </div>
           <div class="column is-one-third">
             <div class="box has-background-dark has-text-light">{props.content}</div>

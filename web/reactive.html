@@ -35,7 +35,7 @@
         this.closeApp = this.closeApp.bind(this);
         this.modalShow = this.modalShow.bind(this);
         this.modalHide = this.modalHide.bind(this);
-        this.state = { movies: [], modalActive: " ", modalContent: " " };
+        this.state = { movies: [], modalActive: " ", modalContent: " ", modalSymLink: " " };
       }
 
       async componentDidMount() {
@@ -49,8 +49,8 @@
         window.close();
       }
 
-      modalShow(content) {
-        this.setState({ modalActive: "is-active", modalContent: content });
+      modalShow(content, symlink) {
+        this.setState({ modalActive: "is-active", modalContent: content, modalSymLink: symlink });
         console.log('Showing');
       }
 
@@ -63,13 +63,13 @@
         return (
           <div>
             <Navbar oclick={this.closeApp} />
-            <Modal active={this.state.modalActive} close={this.modalHide} content={this.state.modalContent}/>
+            <Modal active={this.state.modalActive} close={this.modalHide} content={this.state.modalContent} symlink={this.state.modalSymLink}/>
             <section class="section">
               <div class="container">
                 <div id="TileBox" class="columns is-multiline">
                   {
                     this.state.movies.map(movie => (
-                      <Card src={movie.Poster.substr(4)} alt="Poster" title={movie.Name} onClick={() => this.modalShow(movie.Summary)}/>// content={movie.Summary} />
+                      <Card src={movie.Poster.substr(4)} alt="Poster" title={movie.Name} onClick={() => this.modalShow(movie.Summary, movie.Symlink)}/>// content={movie.Summary} />
                     ))
                   }
                 </div>
